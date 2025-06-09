@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAsync } from "react-use";
 
 import { isExtensionActive } from "@/backend/extension/messaging";
-import { singularProxiedFetch } from "@/backend/helpers/fetch";
+import { proxiedFetch, singularProxiedFetch } from "@/backend/helpers/fetch";
 import { Button } from "@/components/buttons/Button";
 import { Icon, Icons } from "@/components/Icon";
 import { Loading } from "@/components/layout/Loading";
@@ -190,7 +190,7 @@ export async function testRealDebridKey(
       `Attempt ${attempts + 1} of ${maxAttempts} to check Real Debrid token`,
     );
     try {
-      const response = await fetch(
+      const response = await proxiedFetch(
         "https://api.real-debrid.com/rest/1.0/user",
         {
           headers: {
