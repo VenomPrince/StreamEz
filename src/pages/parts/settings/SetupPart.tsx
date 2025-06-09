@@ -74,6 +74,7 @@ type SetupData = {
   proxy: Status;
   defaultProxy: Status;
   febboxKeyTest?: Status;
+  realDebridKeyTest?: Status;
 };
 
 function testProxy(url: string) {
@@ -174,9 +175,89 @@ export async function testFebboxKey(febboxKey: string | null): Promise<Status> {
   return "api_down";
 }
 
+export async function testRealDebridKey(
+  realDebridKey: string | null,
+): Promise<Status> {
+  if (!realDebridKey) {
+    return "unset";
+  }
+
+  let attempts = 0;
+  const maxAttempts = 2;
+
+  while (attempts < maxAttempts) {
+    console.log(
+      `Attempt ${attempts + 1} of ${maxAttempts} to check Real Debrid token`,
+    );
+    try {
+      const response = await fetch(
+        "https://api.real-debrid.com/rest/1.0/user",
+        {
+          headers: {
+            Authorization: `Bearer ${realDebridKey}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        console.error(
+          "Real Debrid API test failed with status:",
+          response.status,
+        );
+        if (response.status === 503 || response.status === 502) {
+          return "api_down";
+        }
+        if (response.status === 401) {
+          return "invalid_token";
+        }
+        if (response.status === 403) {
+          return "invalid_token";
+        }
+        attempts += 1;
+        if (attempts === maxAttempts) {
+          console.log("Max attempts reached, returning error");
+          return "error";
+        }
+        console.log("Retrying after failed response...");
+        await sleep(3000);
+        continue;
+      }
+
+      const data = (await response.json()) as any;
+      if (!data || !data.id) {
+        console.error("Invalid response format from Real Debrid API:", data);
+        attempts += 1;
+        if (attempts === maxAttempts) {
+          console.log("Max attempts reached, returning error");
+          return "invalid_token";
+        }
+        console.log("Retrying after invalid response format...");
+        await sleep(3000);
+        continue;
+      }
+
+      console.log("Valid Real Debrid response, returning success");
+      return "success";
+    } catch (error: any) {
+      console.error("Error testing Real Debrid token:", error);
+      attempts += 1;
+      if (attempts === maxAttempts) {
+        console.log("Max attempts reached, returning error");
+        return "api_down";
+      }
+      console.log("Retrying after error...");
+      await sleep(3000);
+    }
+  }
+
+  console.log("All attempts exhausted, returning error");
+  return "api_down";
+}
+
 function useIsSetup() {
   const proxyUrls = useAuthStore((s) => s.proxySet);
   const febboxKey = usePreferencesStore((s) => s.febboxKey);
+  const realDebridKey = usePreferencesStore((s) => s.realDebridKey);
   const { loading, value } = useAsync(async (): Promise<SetupData> => {
     const extensionStatus: Status = (await isExtensionActive())
       ? "success"
@@ -192,6 +273,7 @@ function useIsSetup() {
     }
 
     const febboxKeyStatus: Status = await testFebboxKey(febboxKey);
+    const realDebridKeyStatus: Status = await testRealDebridKey(realDebridKey);
 
     return {
       extension: extensionStatus,
@@ -200,20 +282,23 @@ function useIsSetup() {
       ...(conf().ALLOW_FEBBOX_KEY && {
         febboxKeyTest: febboxKeyStatus,
       }),
+      realDebridKeyTest: realDebridKeyStatus,
     };
-  }, [proxyUrls, febboxKey]);
+  }, [proxyUrls, febboxKey, realDebridKey]);
 
   let globalState: Status = "unset";
   if (
     value?.extension === "success" ||
     value?.proxy === "success" ||
-    value?.febboxKeyTest === "success"
+    value?.febboxKeyTest === "success" ||
+    value?.realDebridKeyTest === "success"
   )
     globalState = "success";
   if (
     value?.proxy === "error" ||
     value?.extension === "error" ||
-    value?.febboxKeyTest === "error"
+    value?.febboxKeyTest === "error" ||
+    value?.realDebridKeyTest === "error"
   )
     globalState = "error";
 
@@ -354,6 +439,11 @@ export function SetupPart() {
           >
             {t("settings.connections.setup.items.default")}
           </SetupCheckList>
+          {conf().ALLOW_REAL_DEBRID_KEY && (
+            <SetupCheckList status={setupStates.realDebridKeyTest || "unset"}>
+              Real Debrid token
+            </SetupCheckList>
+          )}
           {conf().ALLOW_FEBBOX_KEY && (
             <SetupCheckList status={setupStates.febboxKeyTest || "unset"}>
               Febbox UI token
