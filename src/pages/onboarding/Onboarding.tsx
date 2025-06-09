@@ -41,7 +41,6 @@ import {
 } from "@/pages/onboarding/utils";
 import { PageTitle } from "@/pages/parts/util/PageTitle";
 import { conf } from "@/setup/config";
-import { useAuthStore } from "@/stores/auth";
 import { usePreferencesStore } from "@/stores/preferences";
 import { getProxyUrls } from "@/utils/proxyUrls";
 
