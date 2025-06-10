@@ -198,11 +198,9 @@ export async function testRealDebridKey(
         },
       );
 
-      if (response.error) {
-        return "invalid_token";
-      }
-
+      console.log(response);
       const data = await response.json();
+      console.log(data);
 
       if (data.error) {
         return "invalid_token";
