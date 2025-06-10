@@ -228,6 +228,7 @@ export async function testRealDebridKey(
   }
 
   return "api_down";
+}
 
 function useIsSetup() {
   const proxyUrls = useAuthStore((s) => s.proxySet);
