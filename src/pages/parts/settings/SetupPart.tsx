@@ -187,6 +187,7 @@ export async function testRealDebridKey(
 
   while (attempts < maxAttempts) {
     try {
+      console.log(`RD API attempt ${attempts + 1}`);
       const response = await proxiedFetch(
         "https://api.real-debrid.com/rest/1.0/user",
         {
@@ -198,20 +199,37 @@ export async function testRealDebridKey(
         },
       );
 
-      console.log(response);
-      const data = await response.json();
-      console.log(data);
+      const text = await response.text();
+      console.log("Raw RD response:", text);
 
-      if (data.error) {
-        return "invalid_token";
+      let data;
+      try {
+        data = JSON.parse(text);
+        console.log("Parsed RD data:", data);
+      } catch (e) {
+        console.error("Failed to parse RD response:", e);
+        attempts += 1;
+        if (attempts === maxAttempts) {
+          return "api_down";
+        }
+        await sleep(3000);
+        continue;
       }
 
-      if (data.type === "premium") {
+      // If we have data and it indicates premium status, return success immediately
+      if (data && typeof data === "object" && data.type === "premium") {
+        console.log("RD premium status confirmed");
         return "success";
       }
 
-      return "invalid_token";
+      console.log("RD response did not indicate premium status");
+      attempts += 1;
+      if (attempts === maxAttempts) {
+        return "invalid_token";
+      }
+      await sleep(3000);
     } catch (error) {
+      console.error("RD API error:", error);
       attempts += 1;
       if (attempts === maxAttempts) {
         return "api_down";
