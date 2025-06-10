@@ -225,6 +225,7 @@ export function FEDAPISetup() {
 async function getRealDebridKeyStatus(realDebridKey: string | null) {
   if (realDebridKey) {
     const status: Status = await testRealDebridKey(realDebridKey);
+    console.log("Real Debrid key test status:", status);
     return status;
   }
   return "unset";
@@ -334,7 +335,7 @@ export function RealDebridSetup() {
                 <p className="text-type-danger mt-4">
                   {t(
                     "settings.connections.realdebrid.status.invalid_token",
-                    "Invalid API key. Please check your Real Debrid API key.",
+                    "Invalid API key or non-premium account. Real Debrid requires a premium account.",
                   )}
                 </p>
               )}

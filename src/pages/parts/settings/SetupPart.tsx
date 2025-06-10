@@ -199,69 +199,63 @@ export async function testRealDebridKey(
         },
       );
 
-      let data: any;
-      try {
-        data = await response.json();
-      } catch (e) {
-        console.error("Failed to parse Real Debrid API response:", e);
-        data = null;
+      // First check if the response itself is a server error
+      if (
+        response.status === 503 ||
+        response.status === 502 ||
+        response.status === 500
+      ) {
+        console.error("Real Debrid API server error:", response.status);
+        return "api_down";
       }
 
-      console.log("Real Debrid API response:", data);
+      // If not a server error, we need to analyze the response content
+      try {
+        const data = await response.json();
+        console.log("Real Debrid API response:", data);
 
-      // Check if we have valid data regardless of status code
-      if (data && data.id && data.type) {
-        // Check if user is premium
-        if (data.type === "premium" && data.premium > 0) {
-          console.log(
-            "Valid premium Real Debrid account found, returning success",
-          );
+        // Check for error responses
+        if (data.error) {
+          console.error("Real Debrid API returned an error:", data.error);
+          // "unknown_method" could be a proxy issue or API change
+          if (data.error === "unknown_method" && data.error_code === 3) {
+            return "invalid_token";
+          }
+          return "invalid_token";
+        }
+
+        // Check if the account is premium
+        if (data.id && data.type === "premium") {
+          console.log("Valid premium Real Debrid account found");
           return "success";
         }
-        console.log("Real Debrid account is not premium, returning error");
-        return "invalid_token";
-      }
-
-      // If no valid data, check status code
-      if (!response.ok) {
-        console.error(
-          "Real Debrid API test failed with status:",
-          response.status,
-        );
-        if (
-          response.status === 503 ||
-          response.status === 502 ||
-          response.status === 500 ||
-          response.status === 401 ||
-          response.status === 403 ||
-          response.status === 404
-        ) {
-          return "api_down";
+        if (data.id) {
+          // User exists but is not premium
+          console.log("Real Debrid account found but not premium");
+          return "invalid_token";
         }
+
+        // If we get here, the response was valid JSON but unexpected format
+        console.error("Unexpected response format from Real Debrid API:", data);
+
         attempts += 1;
         if (attempts === maxAttempts) {
-          console.log("Max attempts reached, returning error");
           return "error";
         }
-        console.log("Retrying after failed response...");
         await sleep(3000);
-        continue;
+      } catch (jsonError) {
+        // Failed to parse JSON
+        console.error("Failed to parse Real Debrid API response:", jsonError);
+        attempts += 1;
+        if (attempts === maxAttempts) {
+          return "api_down";
+        }
+        await sleep(3000);
       }
-
-      // If we reach here, something is wrong with the response format
-      console.error("Invalid response format from Real Debrid API:", data);
-      attempts += 1;
-      if (attempts === maxAttempts) {
-        console.log("Max attempts reached, returning error");
-        return "invalid_token";
-      }
-      console.log("Retrying after invalid response format...");
-      await sleep(3000);
     } catch (error: any) {
       console.error("Error testing Real Debrid token:", error);
       attempts += 1;
       if (attempts === maxAttempts) {
-        console.log("Max attempts reached, returning error");
         return "api_down";
       }
       console.log("Retrying after error...");
