@@ -182,90 +182,52 @@ export async function testRealDebridKey(
     return "unset";
   }
 
-  let attempts = 0;
   const maxAttempts = 2;
+  let attempts = 0;
 
   while (attempts < maxAttempts) {
-    console.log(
-      `Attempt ${attempts + 1} of ${maxAttempts} to check Real Debrid token`,
-    );
     try {
       const response = await proxiedFetch(
         "https://api.real-debrid.com/rest/1.0/user",
         {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${realDebridKey}`,
+            "Content-Type": "application/json",
           },
         },
       );
 
-      // First check if the response itself is a server error
-      if (
-        response.status === 503 ||
-        response.status === 502 ||
-        response.status === 500
-      ) {
-        console.error("Real Debrid API server error:", response.status);
-        return "api_down";
-      }
-
-      // If not a server error, we need to analyze the response content
-      try {
-        const data = await response.json();
-        console.log("Real Debrid API response:", data);
-
-        // Check for error responses
-        if (data.error) {
-          console.error("Real Debrid API returned an error:", data.error);
-          // "unknown_method" could be a proxy issue or API change
-          if (data.error === "unknown_method" && data.error_code === 3) {
-            return "invalid_token";
-          }
-          return "invalid_token";
-        }
-
-        // Check if the account is premium
-        if (data.id && data.type === "premium") {
-          console.log("Valid premium Real Debrid account found");
-          return "success";
-        }
-        if (data.id) {
-          // User exists but is not premium
-          console.log("Real Debrid account found but not premium");
-          return "invalid_token";
-        }
-
-        // If we get here, the response was valid JSON but unexpected format
-        console.error("Unexpected response format from Real Debrid API:", data);
-
-        attempts += 1;
-        if (attempts === maxAttempts) {
-          return "error";
-        }
-        await sleep(3000);
-      } catch (jsonError) {
-        // Failed to parse JSON
-        console.error("Failed to parse Real Debrid API response:", jsonError);
+      if (!response.ok) {
         attempts += 1;
         if (attempts === maxAttempts) {
           return "api_down";
         }
         await sleep(3000);
+        continue;
       }
-    } catch (error: any) {
-      console.error("Error testing Real Debrid token:", error);
+
+      const data = await response.json();
+
+      if (data.error) {
+        return "invalid_token";
+      }
+
+      if (data.type === "premium") {
+        return "success";
+      }
+
+      return "invalid_token";
+    } catch (error) {
       attempts += 1;
       if (attempts === maxAttempts) {
         return "api_down";
       }
-      console.log("Retrying after error...");
       await sleep(3000);
     }
   }
 
-  console.log("All attempts exhausted, returning error");
   return "api_down";
-}
 
 function useIsSetup() {
   const proxyUrls = useAuthStore((s) => s.proxySet);
