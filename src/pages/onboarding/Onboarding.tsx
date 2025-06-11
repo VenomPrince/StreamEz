@@ -225,7 +225,6 @@ export function FEDAPISetup() {
 async function getRealDebridKeyStatus(realDebridKey: string | null) {
   if (realDebridKey) {
     const status: Status = await testRealDebridKey(realDebridKey);
-    console.log("Real Debrid key test status:", status);
     return status;
   }
   return "unset";
@@ -596,7 +595,7 @@ export function OnboardingPage() {
           )}
         </div>
 
-        <RealDebridSetup />
+        {/* <RealDebridSetup /> */}
         <FEDAPISetup />
       </BiggerCenterContainer>
     </MinimalPageLayout>

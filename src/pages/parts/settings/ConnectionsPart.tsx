@@ -377,7 +377,6 @@ function FebboxKeyEdit({ febboxKey, setFebboxKey }: FebboxKeyProps) {
 async function getRealDebridKeyStatus(realDebridKey: string | null) {
   if (realDebridKey) {
     const status: Status = await testRealDebridKey(realDebridKey);
-    console.log("Real Debrid key test status:", status);
     return status;
   }
   return "unset";
@@ -425,15 +424,19 @@ function RealDebridKeyEdit({
       <SettingsCard>
         <div className="flex justify-between items-center gap-4">
           <div className="my-3">
-            <p className="text-white font-bold mb-3">
-              {t("settings.connections.realdebrid.title", "Real Debrid API")}
-            </p>
+            <p className="text-white font-bold mb-3">{t("realdebrid.title")}</p>
             <p className="max-w-[30rem] font-medium">
-              {t(
-                "settings.connections.realdebrid.description",
-                "Enter your Real Debrid API key to access premium sources.",
-              )}
+              {t("realdebrid.description")}
             </p>
+            <MwLink>
+              <a
+                href="https://real-debrid.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                real-debrid.com
+              </a>
+            </MwLink>
           </div>
           <div>
             <Toggle
@@ -446,7 +449,7 @@ function RealDebridKeyEdit({
           <>
             <Divider marginClass="my-6 px-8 box-content -mx-8" />
             <p className="text-white font-bold mb-3">
-              {t("settings.connections.realdebrid.tokenLabel", "API Key")}
+              {t("realdebrid.tokenLabel")}
             </p>
             <div className="flex items-center w-full">
               <StatusCircle type={statusMap[status]} className="mx-2 mr-4" />
@@ -455,33 +458,24 @@ function RealDebridKeyEdit({
                   setRealDebridKey(newToken);
                 }}
                 value={realDebridKey ?? ""}
-                placeholder="API Key"
+                placeholder="ABC123..."
                 passwordToggleable
                 className="flex-grow"
               />
             </div>
             {status === "error" && (
               <p className="text-type-danger mt-4">
-                {t(
-                  "settings.connections.realdebrid.status.failure",
-                  "Failed to connect to Real Debrid. Please check your API key.",
-                )}
+                {t("realdebrid.status.failure")}
               </p>
             )}
             {status === "api_down" && (
               <p className="text-type-danger mt-4">
-                {t(
-                  "settings.connections.realdebrid.status.api_down",
-                  "Real Debrid API is currently unavailable. Please try again later.",
-                )}
+                {t("realdebrid.status.api_down")}
               </p>
             )}
             {status === "invalid_token" && (
               <p className="text-type-danger mt-4">
-                {t(
-                  "settings.connections.realdebrid.status.invalid_token",
-                  "Invalid API key or non-premium account. Real Debrid requires a premium account.",
-                )}
+                {t("realdebrid.status.invalid_token")}
               </p>
             )}
           </>
