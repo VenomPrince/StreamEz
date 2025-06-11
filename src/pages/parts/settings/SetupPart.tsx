@@ -199,8 +199,6 @@ export async function testRealDebridKey(
         },
       );
 
-      console.log("RD API response:", data);
-
       // If we have data and it indicates premium status, return success immediately
       if (data && typeof data === "object" && data.type === "premium") {
         console.log("RD premium status confirmed");
