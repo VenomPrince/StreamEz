@@ -1,9 +1,9 @@
 {
   "about": {
-    "description": "P-Stream adalah website yang mengumpulkan sumber media streaming dari internet. Didesain khusus dengan pendekatan minimalis agar mempermudah konsumsi konten.",
+  "description": "StreamEz adalah website yang mengumpulkan sumber media streaming dari internet. Didesain khusus dengan pendekatan minimalis agar mempermudah konsumsi konten.",
     "faqTitle": "Pertanyaan umum",
     "q1": {
-      "body": "P-Stream tidak menyimpan berkas media apapun. Ketika anda mengklik sesuatu untuk ditonton, aplikasi akan mencari berkas media di internet (saat media dimuat dan pada tab 'sumber media' anda dapat melihat sumber mana yang digunakan). P-Stream tidak pernah mengunggah media apapun, semua media didapat melalui mekanisme pencarian di internet.",
+  "body": "StreamEz tidak menyimpan berkas media apapun. Ketika anda mengklik sesuatu untuk ditonton, aplikasi akan mencari berkas media di internet (saat media dimuat dan pada tab 'sumber media' anda dapat melihat sumber mana yang digunakan). StreamEz tidak pernah mengunggah media apapun, semua media didapat melalui mekanisme pencarian di internet.",
       "title": "Dari mana konten berasal?",
       "section": "Umum"
     },
@@ -167,13 +167,13 @@
     "tagline": "Tonton serial televisi dan film favorit anda dengan aplikasi streaming sumber terbuka ini."
   },
   "global": {
-    "name": "P-Stream",
+  "name": "StreamEz",
     "pages": {
       "about": "Tentang",
       "legal": "Legal / DMCA",
       "login": "Masuk",
       "onboarding": "Penyiapan",
-      "pagetitle": "{{title}} - P-Stream",
+  "pagetitle": "{{title}} - StreamEz",
       "register": "Daftar",
       "settings": "Pengaturan"
     }

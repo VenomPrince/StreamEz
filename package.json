@@ -1,6 +1,6 @@
 {
   "packageManager": "pnpm@9.14.4",
-  "name": "P-Stream",
+  "name": "StreamEz",
   "version": "5.1.4",
   "private": true,
   "homepage": "https://github.com/p-stream/p-stream",
@@ -8,8 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:pwa": "cross-env VITE_PWA_ENABLED=true vite build",
-    "update-and-build": "pnpm remove @p-stream/providers && pnpm add github:p-stream/providers#production && pnpm run build",
-    "update-providers": "pnpm update @p-stream/providers",
+  "update-and-build": "pnpm remove @p-stream/providers && pnpm add github:StreamEz/providers#production && pnpm run build",
+  "update-providers": "pnpm update @p-stream/providers",
     "test": "vitest run",
     "preview": "vite preview",
     "lint": "eslint --ext .tsx,.ts src",

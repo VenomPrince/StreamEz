@@ -224,7 +224,7 @@
     "tagline": "Watch your favorite shows and movies for free with no ads ever! (っ'ヮ'c)"
   },
   "global": {
-    "name": "P-Stream",
+  "name": "StreamEz",
     "pages": {
       "about": "About and FAQ",
       "legal": "Legal / DMCA",
@@ -232,7 +232,7 @@
       "support": "Support",
       "login": "Login",
       "onboarding": "Setup",
-      "pagetitle": "{{title}} - P-Stream",
+  "pagetitle": "{{title}} - StreamEz",
       "register": "Register",
       "settings": "Settings",
       "migration": "Migrate Account",
@@ -278,7 +278,7 @@
           "What are you in the mood for?",
           "Should we delete your browser history?",
           "What do you want to stream?",
-          "P-Stream is the best site ever!",
+          "StreamEz is the best site ever!",
           "What's on your watchlist today?",
           "How was your day?",
           "My bad the site never works...",
@@ -307,7 +307,7 @@
     "titles": {
       "day": {
         "default": "What would you like to watch this afternoon?",
-        "extra": ["Viva la P-Stream!"]
+  "extra": ["Viva la StreamEz!"]
       },
       "morning": {
         "default": "What would you like to watch this morning?",
