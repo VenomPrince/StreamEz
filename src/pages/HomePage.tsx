@@ -19,13 +19,13 @@ import { WatchingCarousel } from "@/pages/parts/home/WatchingCarousel";
 import { WatchingPart } from "@/pages/parts/home/WatchingPart";
 import { SearchListPart } from "@/pages/parts/search/SearchListPart";
 import { SearchLoadingPart } from "@/pages/parts/search/SearchLoadingPart";
-import { conf } from "@/setup/config";
+// ads removed: conf import no longer needed here
 import { useOverlayStack } from "@/stores/interface/overlayStack";
 import { usePreferencesStore } from "@/stores/preferences";
 import { MediaItem } from "@/utils/mediaTypes";
 
 import { Button } from "./About";
-import { AdsPart } from "./parts/home/AdsPart";
+// AdsPart removed from HomePage
 
 function useSearch(search: string) {
   const [searching, setSearching] = useState<boolean>(false);
@@ -174,7 +174,7 @@ export function HomePage() {
           />
         )}
 
-        {conf().SHOW_AD ? <AdsPart /> : null}
+        {/* Ads removed - ad component intentionally not rendered here */}
       </div>
 
       {/* Search */}
